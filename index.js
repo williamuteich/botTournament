@@ -2,6 +2,7 @@ const { Client, Events, GatewayIntentBits, Collection, EmbedBuilder  } = require
 const salvarRegistros = require('./query/saveUsers');
 const isuserResult = require('./query/consultaUsers');
 const updateRegistros = require('./query/updateUsers');
+const checkInvocador = require('./query/checkedInvocador');
 
 const fs = require("node:fs")
 const path = require("node:path")
@@ -111,5 +112,39 @@ client.on(Events.InteractionCreate, async interaction => {
 		}
     }
 })
+
+client.on('interactionCreate', async interaction => {
+    if (!interaction.isCommand()) return;
+
+    const userDiscordId = interaction.user.id;
+    const isRegistered = await checkInvocador(userDiscordId);
+    const command = client.commands.get(interaction.commandName);
+
+	console.log('resultado da merda', isRegistered)
+
+    try {
+        if (command) {
+            if (!isRegistered && interaction.commandName !== 'registerinvocador') {
+				console.log("entreou aqyuuuuuuuuuuuuuuuuuuuuuu")
+                const exampleEmbed = new EmbedBuilder()
+                    .setColor('#0099FF')
+                    .setTitle('Registre os dados do seu invocador!')
+                    .setDescription('Registre os dados do seu invocador.')
+                    .setThumbnail('https://cdnb.artstation.com/p/assets/images/images/045/972/517/large/flynn-coltman-bantha-nft.jpg?1643982096')
+                    .addFields({ name: 'Para se registrar, Digite o comando:', value: '/register-invocador', inline: true })
+                    .setTimestamp();
+
+                await interaction.reply({ embeds: [exampleEmbed], ephemeral: true });
+            } else {
+                await command.execute(interaction);
+            }
+        }
+    } catch (error) {
+        console.error('Erro ao responder interação:', error);
+        await interaction.reply({ content: 'Ocorreu um erro ao executar o comando.', ephemeral: true });
+    }
+});
+
+
 
 client.login(DISCORD_TOKEN)
