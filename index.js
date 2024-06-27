@@ -34,6 +34,7 @@ client.on(Events.InteractionCreate, async interaction => {
     if (interaction.isCommand()) {
         const command = client.commands.get(interaction.commandName);
         try {
+            const validCommandsLol = ['invocador', 'recents'];
             const userDiscordId = interaction.user.id;
             const userServerDiscordID = interaction.guild.id;
             const serverName = interaction.guild.name;
@@ -51,7 +52,7 @@ client.on(Events.InteractionCreate, async interaction => {
                 return;
             }
 
-            if (!invocadorIsRegistered && interaction.commandName === 'invocador') {
+            if (!invocadorIsRegistered && validCommandsLol.includes(interaction.commandName)) {
                 const exampleEmbed = createRegisterInvocadorEmbed();
                 await interaction.reply({ embeds: [exampleEmbed], ephemeral: true });
                 return;

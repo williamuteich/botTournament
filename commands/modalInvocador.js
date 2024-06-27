@@ -7,11 +7,11 @@ module.exports = {
         .setName('addsummoner')
         .setDescription('Registrar os dados do seu invocador.')
         .addStringOption(option => option
-            .setName('gameName')
+            .setName('gamename')
             .setDescription('ex: Farofinha')
             .setRequired(true))
         .addStringOption(option => option
-            .setName('tagLine')
+            .setName('tagline')
             .setDescription('ex: 1254')
             .setRequired(true)),
 
@@ -19,8 +19,8 @@ module.exports = {
         try {
             const db = dbConnection.db();
             const invocadorCollection = db.collection('invocadores');
-            const gameName = interaction.options.getString('gameName');
-            const tagLine = interaction.options.getString('tagLine');
+            const gameName = interaction.options.getString('gamename');
+            const tagLine = interaction.options.getString('tagline');
 
             const verificaInvocador = await invocadorCollection.findOne({ userDiscord: interaction.user.id });
 
