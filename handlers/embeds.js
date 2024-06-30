@@ -50,7 +50,7 @@ function showInvocador(data, matchInfo) {
             {
                 inline: true,
                 name: 'Level:',
-                value: '240',
+                value: `${data.summonerLevel}`,
             },
             {
                 inline: true,
@@ -70,7 +70,7 @@ function showInvocador(data, matchInfo) {
             {
                 inline: false,
                 name: `${win} ${matchInfo.gameMode}`,
-                value: `\n\`\`\`* ${data.championName}/${data.role} - ${minutes}:${seconds}\n\n Kill: ${data.kills} || Mortes: ${data.deaths} || Assist: ${data.assists}\n Gold: ${data.goldEarned} || Dano: ${data.totalDamageDealtToChampions} \n\`\`\``,
+                value: `\n\`\`\`* ${data.championName}/${data.role} - ${minutes}:${seconds}\n\n Kill: ${data.kills} || Mortes: ${data.deaths} || Assist: ${data.assists}\n Farm: ${data.totalMinionsKilled} || Wards: ${data.wardsPlaced} \n Dano: ${data.totalDamageDealtToChampions} || Gold: ${data.goldEarned}\n\`\`\``,
             },
             {
                 inline: false,
