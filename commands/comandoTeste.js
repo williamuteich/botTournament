@@ -21,17 +21,17 @@ module.exports = {
                 fields: [
                     {
                         inline: true,
-                        name: 'Level',
+                        name: 'Level:',
                         value: '240',
                     },
                     {
                         inline: true,
-                        name: 'Campeão Fav',
+                        name: 'Champ/Main:',
                         value: 'Yone',
                     },
                     {
                         inline: true,
-                        name: 'Elo',
+                        name: 'Elo:',
                         value: 'Gold',
                     },
                     {
@@ -40,8 +40,29 @@ module.exports = {
                         inline: true,
                     },
                     {
-                        name: '\u200b',
-                        value: '```diff\n- Normal game: PIPIPIPOPOPO\n```',
+                        inline: false,
+                        name: ':red_circle:  Normal',
+                        value: '\n\`\`\`* Morderkaiser/Top\n\n Kill: 12 || Mortes: 5 || Assist: 21\n Gold: 16521 || Dano: 34200 ||\n\`\`\`',
+                    },
+                    {
+                        inline: false,
+                        name: ':green_circle:  Ranked',
+                        value: '\n\`\`\`* Yasuo/Mid\n\n Kill: 12 || Mortes: 5 || Assist: 21\n Gold: 16521 || Dano: 34200 ||\n\`\`\`',
+                    },
+                    {
+                        inline: false,
+                        name: ':green_circle:  Normal',
+                        value: '\n\`\`\`* Shaco/Jungle\n\n Kill: 12 || Mortes: 5 || Assist: 21\n Gold: 16521 || Dano: 34200 ||\n\`\`\`',
+                    },
+                    {
+                        inline: false,
+                        name: ':red_circle:  ARAM',
+                        value: '\n\`\`\`* Tristana/Adc\n\n Kill: 12 || Mortes: 5 || Assist: 21\n Gold: 16521 || Dano: 34200 ||\n\`\`\`',
+                    },
+                    {
+                        inline: false,
+                        name: ':red_circle:  Ranked',
+                        value: '\n\`\`\`* Pyke/Sup\n\n Kill: 12 || Mortes: 5 || Assist: 21\n Gold: 16521 || Dano: 34200 ||\n\`\`\`',
                     },
                 ],
                 image: {
@@ -49,7 +70,7 @@ module.exports = {
                 },
                 timestamp: new Date().toISOString(),
                 footer: {
-                    text: 'Últimas Partidas',
+                    text: 'Partidas Atualizadas',
                     icon_url: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSXrRZULzkZxxyhfNb6g44YXq6l-vS3eQqmz0fdrVne4GNajAnT2ulVyPszCQgpwmjTlRg&usqp=CAU',
                 },
             };
