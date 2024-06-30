@@ -2,6 +2,7 @@ const { SlashCommandBuilder } = require('discord.js');
 const dbConnection = require('../database/discordDatabase').client;
 const riotMatchV5 = require('../api/apiRiotAccounts').riotMatchV5;
 const riotMatchData = require('../api/apiRiotAccounts').riotMatchData;
+const { showInvocador } = require('../handlers/embeds');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -29,8 +30,10 @@ module.exports = {
 
                for (const participante of returnMatch.info.participants) {
                     if (participante.puuid === invocadorData.puuid) {
-                        console.log("participante>>>", participante)
-                        interaction.reply('Você participou da partida.', participante);
+
+                        const exampleEmbed = showInvocador(participante, returnMatch.info);
+
+                        await interaction.reply({ embeds: [exampleEmbed], ephemeral: true });
                     }
                }
             }
