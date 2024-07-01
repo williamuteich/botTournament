@@ -25,7 +25,7 @@ async function fetchRiotAccount(gameName, tagLine){
 }
 
 async function riotMatchV5(puuid) {
-    const url = `https://americas.api.riotgames.com/lol/match/v5/matches/by-puuid/${puuid}/ids?start=0&count=1&api_key=${RIOT_TOKEN}`
+    const url = `https://americas.api.riotgames.com/lol/match/v5/matches/by-puuid/${puuid}/ids?start=0&count=5&api_key=${RIOT_TOKEN}`
     
     try {
         const response = await axios.get(url, { headers})
@@ -37,15 +37,25 @@ async function riotMatchV5(puuid) {
     }
 }
 
-async function riotMatchData(data) {
-    const url = `https://americas.api.riotgames.com/lol/match/v5/matches/${data}?api_key=${RIOT_TOKEN}`;
-
+async function riotMatchData(matchIds) {
     try {
-        const response = await axios.get(url, { headers})
-        return response.data;
+        const matches = [];
+
+        for (let matchId of matchIds) {
+            const url = `https://americas.api.riotgames.com/lol/match/v5/matches/${matchId}?api_key=${RIOT_TOKEN}`;
+            const response = await axios.get(url, { headers });
+            
+            if (response.status === 200) {
+                matches.push(response.data);
+            } else {
+                console.error(`Erro ao buscar dados da partida ${matchId}: Status ${response.status}`);
+            }
+        }
+
+        return matches;
 
     } catch (error) {
-        console.error(`Erro ao buscar dados da partida ${match}:`, error);
+        console.error('Erro ao buscar dados das partidas:', error);
         throw error;
     }
 }

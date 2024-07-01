@@ -20,20 +20,21 @@ function createRegisterInvocadorEmbed() {
         .setTimestamp();
 }
 
-function showInvocador(data, matchInfo) {
-    console.log("resultado", matchInfo)
-    let win;
+function showInvocador(data) {
+    console.log("resultado do data", JSON.stringify(data, null, 2));
+    //console.log("resultado do matchInfo", JSON.stringify(matchInfo, null, 2));
+    //let win;
 
-    let gameDurationSeconds = matchInfo.gameDuration;
-    let minutes = Math.floor(gameDurationSeconds / 60);
-    let seconds = gameDurationSeconds % 60;
+    //let gameDurationSeconds = matchInfo.gameDuration;
+    //let minutes = Math.floor(gameDurationSeconds / 60);
+    //let seconds = gameDurationSeconds % 60;
     
     
-    if (data.win === true) {
-        win = ':green_circle:';
-    } else {
-        win = ':red_circle:';
-    }
+    //if (data.win === true) {
+    //    win = ':green_circle:';
+    //} else {
+    //    win = ':red_circle:';
+    //}
     
     return {
         color: 5763719,
@@ -69,8 +70,9 @@ function showInvocador(data, matchInfo) {
             },
             {
                 inline: false,
-                name: `${win} ${matchInfo.gameMode}`,
-                value: `\n\`\`\`* ${data.championName}/${data.role} - ${minutes}:${seconds}\n\n Kill: ${data.kills} || Mortes: ${data.deaths} || Assist: ${data.assists}\n Farm: ${data.totalMinionsKilled} || Wards: ${data.wardsPlaced} \n Dano: ${data.totalDamageDealtToChampions} || Gold: ${data.goldEarned}\n\`\`\``,
+                name: `:green_circle: Normal`, //${win} ${matchInfo.gameMode}
+                value: `\n\`\`\`* ${data.championName}/${data.role} - 37:41\n\n Kill: ${data.kills} || Mortes: ${data.deaths} || Assist: ${data.assists}\n Farm: ${data.totalMinionsKilled} || Wards: ${data.wardsPlaced} \n Dano: ${data.totalDamageDealtToChampions} || Gold: ${data.goldEarned}\n\`\`\``,
+                // value: `\n\`\`\`* ${data.championName}/${data.role} - ${minutes}:${seconds}\n\n Kill: ${data.kills} || Mortes: ${data.deaths} || Assist: ${data.assists}\n Farm: ${data.totalMinionsKilled} || Wards: ${data.wardsPlaced} \n Dano: ${data.totalDamageDealtToChampions} || Gold: ${data.goldEarned}\n\`\`\``,
             },
             {
                 inline: false,
@@ -103,7 +105,7 @@ function showInvocador(data, matchInfo) {
         },
     };
 }
-
+ 
 module.exports = {
     createRegisterEmbed,
     createRegisterInvocadorEmbed,
