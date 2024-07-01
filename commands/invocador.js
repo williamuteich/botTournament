@@ -31,20 +31,9 @@ module.exports = {
             if (invocadorData) {
                 const retornoApi = await riotMatchV5(invocadorData.puuid);
                 const returnMatch = await riotMatchData(retornoApi);
-
                 if (Array.isArray(returnMatch)) {
-                    for (const partidas of returnMatch) {
-                        if (partidas.info) {
-                            for (const participante of partidas.info.participants) {
-                                if (participante.puuid === invocadorData.puuid) {
-                                    const exampleEmbed = showInvocador(participante);
-
-                                    await interaction.editReply({ embeds: [exampleEmbed], ephemeral: true });
-                                    return; 
-                                }
-                            }
-                        }
-                    }
+                    const exampleEmbed = showInvocador(returnMatch, invocadorData);
+                    await interaction.editReply({ embeds: [exampleEmbed], ephemeral: true });
                 } 
             }
         } catch (error) {

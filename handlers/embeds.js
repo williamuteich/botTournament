@@ -20,26 +20,28 @@ function createRegisterInvocadorEmbed() {
         .setTimestamp();
 }
 
-function showInvocador(data) {
-    console.log("resultado do data", JSON.stringify(data, null, 2));
-    //console.log("resultado do matchInfo", JSON.stringify(matchInfo, null, 2));
-    //let win;
+function showInvocador(partidas, invocadorData) {
+    const embedFields = partidas.map(partida => {
+        const jogador = partida.info.participants.find(participante => participante.puuid === invocadorData.puuid);
+        const gameMode = partida.info.gameMode;
+        const win = jogador.win;
 
-    //let gameDurationSeconds = matchInfo.gameDuration;
-    //let minutes = Math.floor(gameDurationSeconds / 60);
-    //let seconds = gameDurationSeconds % 60;
-    
-    
-    //if (data.win === true) {
-    //    win = ':green_circle:';
-    //} else {
-    //    win = ':red_circle:';
-    //}
-    
+        const gameDurationSeconds = partida.info.gameDuration;
+        const minutes = Math.floor(gameDurationSeconds / 60);
+        const seconds = gameDurationSeconds % 60;
+
+        const emoji = win ? ':green_circle:' : ':red_circle:';
+
+        return {
+            inline: false,
+            name: `${emoji} ${gameMode}`,
+            value: `\n\`\`\`${jogador.championName}/${jogador.role} - ${minutes}:${seconds}\n\n Kill: ${jogador.kills} || Mortes: ${jogador.deaths} || Assist: ${jogador.assists}\n Farm: ${jogador.totalMinionsKilled} || Wards: ${jogador.wardsPlaced} \n Dano: ${jogador.totalDamageDealtToChampions} || Gold: ${jogador.goldEarned}\n\`\`\``,
+        };
+    });
+
     return {
         color: 5763719,
-        title: `${data.riotIdTagline}#${data.riotIdTagline}`,
-        url: 'https://discord.js.org',
+        title: `${invocadorData.tagName}#${invocadorData.tagLine}`,
         author: {
             name: 'League of Legends',
         },
@@ -47,54 +49,7 @@ function showInvocador(data) {
         thumbnail: {
             url: 'https://i.pinimg.com/736x/d1/b1/1d/d1b11d5e4dbae547ac0d651476cec488.jpg',
         },
-        fields: [
-            {
-                inline: true,
-                name: 'Level:',
-                value: `${data.summonerLevel}`,
-            },
-            {
-                inline: true,
-                name: 'Champ/Main:',
-                value: 'Yone',
-            },
-            {
-                inline: true,
-                name: 'Elo:',
-                value: 'Gold',
-            },
-            {
-                name: '\u200b',
-                value: '\u200b',
-                inline: true,
-            },
-            {
-                inline: false,
-                name: `:green_circle: Normal`, //${win} ${matchInfo.gameMode}
-                value: `\n\`\`\`* ${data.championName}/${data.role} - 37:41\n\n Kill: ${data.kills} || Mortes: ${data.deaths} || Assist: ${data.assists}\n Farm: ${data.totalMinionsKilled} || Wards: ${data.wardsPlaced} \n Dano: ${data.totalDamageDealtToChampions} || Gold: ${data.goldEarned}\n\`\`\``,
-                // value: `\n\`\`\`* ${data.championName}/${data.role} - ${minutes}:${seconds}\n\n Kill: ${data.kills} || Mortes: ${data.deaths} || Assist: ${data.assists}\n Farm: ${data.totalMinionsKilled} || Wards: ${data.wardsPlaced} \n Dano: ${data.totalDamageDealtToChampions} || Gold: ${data.goldEarned}\n\`\`\``,
-            },
-            {
-                inline: false,
-                name: ':green_circle:  Ranked',
-                value: '\n\`\`\`* Yasuo/Mid\n\n Kill: 12 || Mortes: 5 || Assist: 21\n Gold: 16521 || Dano: 34200 ||\n\`\`\`',
-            },
-            {
-                inline: false,
-                name: ':green_circle:  Normal',
-                value: '\n\`\`\`* Shaco/Jungle\n\n Kill: 12 || Mortes: 5 || Assist: 21\n Gold: 16521 || Dano: 34200 ||\n\`\`\`',
-            },
-            {
-                inline: false,
-                name: ':red_circle:  ARAM',
-                value: '\n\`\`\`* Tristana/Adc\n\n Kill: 12 || Mortes: 5 || Assist: 21\n Gold: 16521 || Dano: 34200 ||\n\`\`\`',
-            },
-            {
-                inline: false,
-                name: ':red_circle:  Ranked',
-                value: '\n\`\`\`* Pyke/Sup\n\n Kill: 12 || Mortes: 5 || Assist: 21\n Gold: 16521 || Dano: 34200 ||\n\`\`\`',
-            },
-        ],
+        fields: embedFields,
         image: {
             url: 'https://c.wallhere.com/photos/a5/92/Soul_Fighter_League_of_Legends_video_games_GZG_4K_Riot_Games_digital_art_League_of_Legends_Sett_League_of_Legends-2252644.jpg!d',
         },

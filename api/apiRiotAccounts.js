@@ -38,13 +38,13 @@ async function riotMatchV5(puuid) {
 }
 
 async function riotMatchData(matchIds) {
-    try {
-        const matches = [];
+    const matches = [];
 
+    try {
         for (let matchId of matchIds) {
             const url = `https://americas.api.riotgames.com/lol/match/v5/matches/${matchId}?api_key=${RIOT_TOKEN}`;
             const response = await axios.get(url, { headers });
-            
+
             if (response.status === 200) {
                 matches.push(response.data);
             } else {
