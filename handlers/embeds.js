@@ -35,13 +35,13 @@ function showInvocador(partidas, invocadorData) {
         return {
             inline: false,
             name: `${emoji} ${gameMode}`,
-            value: `\n\`\`\`${jogador.championName}/${jogador.role} - ${minutes}:${seconds}\n\n Kill: ${jogador.kills} || Mortes: ${jogador.deaths} || Assist: ${jogador.assists}\n Farm: ${jogador.totalMinionsKilled} || Wards: ${jogador.wardsPlaced} \n Dano: ${jogador.totalDamageDealtToChampions} || Gold: ${jogador.goldEarned}\n\`\`\``,
+            value: `\n\`\`\`${jogador.championName}/${jogador.teamPosition} - ${minutes}:${seconds}\n\n Kill: ${jogador.kills} | Mortes: ${jogador.deaths} | Assist: ${jogador.assists}\n Farm: ${jogador.totalMinionsKilled} | Wards: ${jogador.wardsPlaced} \n Dano: ${jogador.totalDamageDealtToChampions} | Gold: ${jogador.goldEarned}\n\`\`\``,
         };
     });
 
     return {
         color: 5763719,
-        title: `${invocadorData.tagName}#${invocadorData.tagLine}`,
+        title: `${invocadorData.gameName}#${invocadorData.tagLine}`,
         author: {
             name: 'League of Legends',
         },
