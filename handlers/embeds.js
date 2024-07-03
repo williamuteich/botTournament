@@ -16,15 +16,25 @@ function createRegisterInvocadorEmbed() {
         .setTitle('Registre os dados do seu invocador!')
         .setDescription('Registre os dados do seu invocador.')
         .setThumbnail('https://cdnb.artstation.com/p/assets/images/images/045/972/517/large/flynn-coltman-bantha-nft.jpg?1643982096')
-        .addFields({ name: 'Para se registrar, Digite o comando:', value: '/register-invocador', inline: true })
+        .addFields({ name: 'Para se registrar, Digite o comando:', value: '/addinvocador', inline: true })
         .setTimestamp();
 }
 
 function showInvocador(partidas, invocadorData) {
+    const jogador = partidas.flatMap(partida => partida.info.participants)
+                           .find(participante => participante.puuid === invocadorData.puuid);
+
+    if (!jogador) {
+        throw new Error(`Jogador com puuid ${invocadorData.puuid} não encontrado nas partidas.`);
+    }
+
+    const riotIdGameName = jogador.riotIdGameName;
+    const riotIdTagline = jogador.riotIdTagline;
+
     const embedFields = partidas.map(partida => {
-        const jogador = partida.info.participants.find(participante => participante.puuid === invocadorData.puuid);
+        const jogadorPartida = partida.info.participants.find(participante => participante.puuid === invocadorData.puuid);
         const gameMode = partida.info.gameMode;
-        const win = jogador.win;
+        const win = jogadorPartida.win;
 
         const gameDurationSeconds = partida.info.gameDuration;
         const minutes = Math.floor(gameDurationSeconds / 60);
@@ -35,13 +45,13 @@ function showInvocador(partidas, invocadorData) {
         return {
             inline: false,
             name: `${emoji} ${gameMode}`,
-            value: `\n\`\`\`${jogador.championName}/${jogador.teamPosition} - ${minutes}:${seconds}\n\n Kill: ${jogador.kills} | Mortes: ${jogador.deaths} | Assist: ${jogador.assists}\n Farm: ${jogador.totalMinionsKilled} | Wards: ${jogador.wardsPlaced} \n Dano: ${jogador.totalDamageDealtToChampions} | Gold: ${jogador.goldEarned}\n\`\`\``,
+            value: `\n\`\`\`${jogadorPartida.championName}/${jogadorPartida.teamPosition} - ${minutes}:${seconds}\n\n Kill: ${jogadorPartida.kills} | Mortes: ${jogadorPartida.deaths} | Assist: ${jogadorPartida.assists}\n Farm: ${jogadorPartida.totalMinionsKilled} | Wards: ${jogadorPartida.wardsPlaced} \n Dano: ${jogadorPartida.totalDamageDealtToChampions} | Gold: ${jogadorPartida.goldEarned}\n\`\`\``,
         };
     });
 
     return {
         color: 5763719,
-        title: `${invocadorData.gameName}#${invocadorData.tagLine}`,
+        title: `${riotIdGameName}#${riotIdTagline}`,
         author: {
             name: 'League of Legends',
         },
@@ -60,7 +70,7 @@ function showInvocador(partidas, invocadorData) {
         },
     };
 }
- 
+
 module.exports = {
     createRegisterEmbed,
     createRegisterInvocadorEmbed,

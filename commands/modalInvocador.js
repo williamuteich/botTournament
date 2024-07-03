@@ -1,10 +1,10 @@
 const { SlashCommandBuilder } = require('discord.js');
-const fetchRiotAccount = require('../api/apiRiotAccounts');
+const fetchRiotAccount = require('../api/apiRiotAccounts').fetchRiotAccount;
 const dbConnection = require('../database/discordDatabase').client;
 
 module.exports = {
     data: new SlashCommandBuilder()
-        .setName('addsummoner')
+        .setName('addinvocador')
         .setDescription('Registrar os dados do seu invocador.')
         .addStringOption(option => option
             .setName('gamename')
@@ -34,6 +34,7 @@ module.exports = {
                 userDiscord: interaction.user.id,
                 gameName,
                 tagLine,
+                KDA: 0,
                 puuid: resultRiot.puuid,
                 active: true,
                 createdAt: new Date(),
