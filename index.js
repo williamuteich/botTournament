@@ -25,9 +25,13 @@ const { createRegisterEmbed, createRegisterInvocadorEmbed } = require('./handler
 const { handleModalRegister, handleModalUpdate } = require('./handlers/modalHandlers');
 const checkInvocador = require('./query/checkedInvocador');
 const isuserResult = require('./query/consultaUsers');
+const { handleListRank } = require('./checkFunctions/listRank');
 
 client.once(Events.ClientReady, c => {
     console.log(`O bot está online como ${c.user.tag}`);
+    setInterval(() => {
+        handleListRank();
+    }, 30000);
 });
 
 client.on(Events.InteractionCreate, async interaction => {

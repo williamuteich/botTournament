@@ -39,7 +39,7 @@ module.exports = {
 
             if (invocadorData && !promptName && !promptTag) {
                 const retornoApi = await riotMatchV5(invocadorData.puuid);
-                const returnMatch = await riotMatchData(retornoApi);
+                const returnMatch = await riotMatchData(retornoApi, 5);
 
                 if (Array.isArray(returnMatch)) {
                     const exampleEmbed = showInvocador(returnMatch, invocadorData);
@@ -48,7 +48,7 @@ module.exports = {
             } else if(promptName && promptTag) {
                 const buscaPuuid = await fetchRiotAccount(promptName, promptTag);
                 const retornoApi = await riotMatchV5(buscaPuuid.puuid);
-                const returnMatch = await riotMatchData(retornoApi);
+                const returnMatch = await riotMatchData(retornoApi, 5);
 
                 if (Array.isArray(returnMatch)) {
                     const exampleEmbed = showInvocador(returnMatch, buscaPuuid);

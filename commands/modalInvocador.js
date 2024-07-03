@@ -34,7 +34,6 @@ module.exports = {
                 userDiscord: interaction.user.id,
                 gameName,
                 tagLine,
-                KDA: 0,
                 puuid: resultRiot.puuid,
                 active: true,
                 createdAt: new Date(),
