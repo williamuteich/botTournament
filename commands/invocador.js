@@ -38,11 +38,12 @@ module.exports = {
             }
 
             if (invocadorData && !promptName && !promptTag) {
+                const imagemInvocador = interaction.user.avatarURL()
                 const retornoApi = await riotMatchV5(invocadorData.puuid, 5);
                 const returnMatch = await riotMatchData(retornoApi);
 
                 if (Array.isArray(returnMatch)) {
-                    const exampleEmbed = showInvocador(returnMatch, invocadorData);
+                    const exampleEmbed = showInvocador(returnMatch, invocadorData, imagemInvocador);
                     await interaction.editReply({ embeds: [exampleEmbed], ephemeral: true });
                 } 
             } else if(promptName && promptTag) {

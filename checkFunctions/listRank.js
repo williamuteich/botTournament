@@ -7,7 +7,7 @@ async function handleListRank(client) {
     const invocadoresColletion = db.collection('invocadores');
 
     try {
-        const count = await invocadoresColletion.countDocuments();
+        //const count = await invocadoresColletion.countDocuments();
 
         const invocadores = await invocadoresColletion.find({}).toArray();
 
@@ -24,15 +24,26 @@ async function handleListRank(client) {
                                                        .find(participante => participante.puuid === jogadorPuuid);
                         if (invocador) {
                             let somaKDA = 0;
+                            let invocadorPuuid = "";
                             jsonResultado.forEach(partida => {
                                 const participante = partida.info.participants.find(part => part.puuid === jogadorPuuid);
                                 if (participante && participante.challenges && participante.challenges.kda) {
                                     somaKDA += participante.challenges.kda;
+                                    invocadorPuuid = participante.puuid
                                 }
                             });
-                            //vai pegar o kda de todas as partidas e somar e a quantidade de partidas jogadas
-                            //para depois fazer uma media de KDA
-                            console.log("Soma de todos os KDA:", somaKDA/jsonResultado.length);
+
+                            const resultKda = somaKDA / jsonResultado.length;
+
+                            const filter = { puuid: jogadorPuuid };
+                            const updateDoc = {
+                                $set: {
+                                    KDA: resultKda
+                                }
+                            };
+
+                            const result = await invocadoresColletion.updateOne(filter, updateDoc, { upsert: true });
+                            console.log(`Updated KDA for invocador with puuid ${jogadorPuuid}.`);
                         } else {
                             console.log(`Invocador não encontrado.`);
                         }

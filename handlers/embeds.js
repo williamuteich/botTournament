@@ -20,7 +20,8 @@ function createRegisterInvocadorEmbed() {
         .setTimestamp();
 }
 
-function showInvocador(partidas, invocadorData) {
+function showInvocador(partidas, invocadorData, imagem) {
+    const imagemJogador = imagem ? imagem : 'https://i.pinimg.com/736x/d1/b1/1d/d1b11d5e4dbae547ac0d651476cec488.jpg'
     const jogador = partidas.flatMap(partida => partida.info.participants)
                            .find(participante => participante.puuid === invocadorData.puuid);
 
@@ -54,15 +55,17 @@ function showInvocador(partidas, invocadorData) {
         title: `${riotIdGameName}#${riotIdTagline}`,
         author: {
             name: 'League of Legends',
+            iconURL: 'https://i.pinimg.com/736x/d1/b1/1d/d1b11d5e4dbae547ac0d651476cec488.jpg'
         },
-        description: 'Histórico de Partidas',
+        description: 'Histórico de Partidas: \n\n \u200B',
         thumbnail: {
-            url: 'https://i.pinimg.com/736x/d1/b1/1d/d1b11d5e4dbae547ac0d651476cec488.jpg',
+            url: imagemJogador,
         },
+        
         fields: embedFields,
-        image: {
-            url: 'https://c.wallhere.com/photos/a5/92/Soul_Fighter_League_of_Legends_video_games_GZG_4K_Riot_Games_digital_art_League_of_Legends_Sett_League_of_Legends-2252644.jpg!d',
-        },
+        //image: {
+        //    url: 'https://c.wallhere.com/photos/a5/92/Soul_Fighter_League_of_Legends_video_games_GZG_4K_Riot_Games_digital_art_League_of_Legends_Sett_League_of_Legends-2252644.jpg!d',
+        //},
         timestamp: new Date().toISOString(),
         footer: {
             text: 'Partidas Atualizadas',
