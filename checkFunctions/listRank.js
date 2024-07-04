@@ -1,81 +1,73 @@
 const dbConnection = require('../database/discordDatabase').client;
-const { riotMatchV5, riotMatchData } = require('../api/apiRiotAccounts');
+const { riotMatchV5 } = require('../api/apiRiotAccounts');
+const { riotMatchData } = require('../api/apiRiotAccounts');
+
+let isUpdating = true;
 
 async function handleListRank(client) {
     const db = dbConnection.db();
     const invocadoresColletion = db.collection('invocadores');
 
     try {
-        const count = await invocadoresColletion.countDocuments();
-        console.log(`Total de invocadores: ${count}`);
         const invocadores = await invocadoresColletion.find({}).toArray();
+        const totalInvocadores = invocadores.length;
+        let invocadoresAtualizados = 0;
 
-        if (invocadores) { 
-            const groupedInvocadores = [];
-            for (let i = 0; i < invocadores.length; i += 3) {
-                groupedInvocadores.push(invocadores.slice(i, i + 3));
+        for (const invocador of invocadores) {
+            if (!isUpdating) {
+                console.log('Processo de atualização de KDA foi encerrado.');
+                return;
             }
 
-            for (let groupIndex = 0; groupIndex < groupedInvocadores.length; groupIndex++) {
-                const grupo = groupedInvocadores[groupIndex];
-                const promises = [];
+            const jogadorPuuid = invocador.puuid;
 
-                grupo.forEach(invocador => {
-                    const jogadorPuuid = invocador.puuid;
-                    const promise = new Promise(async (resolve, reject) => {
-                        try {
-                            const matches = await riotMatchV5(jogadorPuuid, 15);
-                            const jsonResultado = await riotMatchData(matches);
-                    
-                            if (Array.isArray(jsonResultado)) {
-                                const invocadorEncontrado = jsonResultado.flatMap(partida => partida.info.participants)
-                                                                  .find(participante => participante.puuid === jogadorPuuid);
-                                if (invocadorEncontrado) {
-                                    let somaKDA = 0;
-                                    jsonResultado.forEach(partida => {
-                                        const participante = partida.info.participants.find(part => part.puuid === jogadorPuuid);
-                                        if (participante && participante.challenges && participante.challenges.kda) {
-                                            somaKDA += participante.challenges.kda;
-                                        }
-                                    });
+            try {
+                const matches = await riotMatchV5(jogadorPuuid, 3);
+                const jsonResultado = await riotMatchData(matches);
 
-                                    const resultKda = somaKDA / jsonResultado.length;
+                if (Array.isArray(jsonResultado)) {
+                    const participante = jsonResultado.flatMap(partida => partida.info.participants)
+                                                     .find(participante => participante.puuid === jogadorPuuid);
 
-                                    const filter = { puuid: jogadorPuuid };
-                                    const updateDoc = {
-                                        $set: {
-                                            KDA: resultKda
-                                        }
-                                    };
-
-                                    const result = await invocadoresColletion.updateOne(filter, updateDoc, { upsert: true });
-                                    console.log(`Documento atualizado para jogador com PUUID ${jogadorPuuid}`);
-                                } else {
-                                    console.log(`Invocador com PUUID ${jogadorPuuid} não encontrado.`);
-                                }
+                    if (participante) {
+                        let somaKDA = 0;
+                        jsonResultado.forEach(partida => {
+                            const participante = partida.info.participants.find(part => part.puuid === jogadorPuuid);
+                            if (participante && participante.challenges && participante.challenges.kda) {
+                                somaKDA += participante.challenges.kda;
                             }
+                        });
 
-                            resolve();
-                        } catch (error) {
-                            reject(error);
-                        }
-                    });
+                        const resultKda = somaKDA / jsonResultado.length;
 
-                    promises.push(promise);
-                });
+                        const filter = { puuid: jogadorPuuid };
+                        const updateDoc = {
+                            $set: {
+                                KDA: resultKda
+                            }
+                        };
 
-                await Promise.all(promises);
-
-                if (groupIndex < groupedInvocadores.length - 1) {
-                    console.log(`Aguardando 2 minutos antes do próximo grupo de requisições...`);
-                    await new Promise(resolve => setTimeout(resolve, 120000)); 
+                        const result = await invocadoresColletion.updateOne(filter, updateDoc, { upsert: true });
+                        console.log(`Documento atualizado para jogador com PUUID ${jogadorPuuid}`);
+                        invocadoresAtualizados++;
+                    } else {
+                        console.log(`Invocador com PUUID ${jogadorPuuid} não encontrado.`);
+                    }
                 }
+            } catch (error) {
+                console.error('Erro ao buscar partidas:', error);
             }
         }
 
-        return invocadores;
+        if (invocadoresAtualizados === totalInvocadores) {
+            console.log('Todos os invocadores foram atualizados.');
+        } else {
+            console.log(`A atualização foi interrompida. Invocadores atualizados: ${invocadoresAtualizados} de ${totalInvocadores}`);
+        }
     } catch (error) {
         console.error('Erro ao listar ranking:', error);
+    } finally {
+        isUpdating = false;
     }
 }
 

@@ -29,8 +29,8 @@ const isuserResult = require('./query/consultaUsers');
 const { handleListRank } = require('./checkFunctions/listRank');
 
 const rule = new schedule.RecurrenceRule();
-rule.hour = 4; 
-rule.minute = 21; 
+rule.hour = 6; 
+rule.minute = 10; 
 rule.tz = 'America/Sao_Paulo';
 
 schedule.scheduleJob(rule, () => {
