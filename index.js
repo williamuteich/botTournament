@@ -2,6 +2,7 @@ const { Client, Events, GatewayIntentBits, Collection, EmbedBuilder } = require(
 const dotenv = require('dotenv');
 const fs = require('node:fs');
 const path = require('node:path');
+const schedule = require('node-schedule');
 dotenv.config();
 const { DISCORD_TOKEN } = process.env;
 
@@ -27,11 +28,21 @@ const checkInvocador = require('./query/checkedInvocador');
 const isuserResult = require('./query/consultaUsers');
 const { handleListRank } = require('./checkFunctions/listRank');
 
+const rule = new schedule.RecurrenceRule();
+rule.hour = 4; 
+rule.minute = 21; 
+rule.tz = 'America/Sao_Paulo';
+
+schedule.scheduleJob(rule, () => {
+    handleListRank();
+    console.log('Job executado');
+});
+
 client.once(Events.ClientReady, c => {
     console.log(`O bot está online como ${c.user.tag}`);
     setInterval(() => {
         handleListRank();
-    }, 3600000);
+    }, 240000);
 });
 
 client.on(Events.InteractionCreate, async interaction => {
