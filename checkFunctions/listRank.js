@@ -2,9 +2,15 @@ const dbConnection = require('../database/discordDatabase').client;
 const { riotMatchV5 } = require('../api/apiRiotAccounts');
 const { riotMatchData } = require('../api/apiRiotAccounts');
 
-let isUpdating = true;
+let isUpdating = false; 
 
 async function handleListRank(client) {
+    if (isUpdating) {
+        console.log('Atualização em andamento. Ignorando nova execução.');
+        return;
+    }
+
+    isUpdating = true; 
     const db = dbConnection.db();
     const invocadoresColletion = db.collection('invocadores');
 
@@ -14,11 +20,6 @@ async function handleListRank(client) {
         let invocadoresAtualizados = 0;
 
         for (const invocador of invocadores) {
-            if (!isUpdating) {
-                console.log('Processo de atualização de KDA foi encerrado.');
-                return;
-            }
-
             const jogadorPuuid = invocador.puuid;
 
             try {
@@ -67,7 +68,7 @@ async function handleListRank(client) {
     } catch (error) {
         console.error('Erro ao listar ranking:', error);
     } finally {
-        isUpdating = false;
+        isUpdating = false; 
     }
 }
 
