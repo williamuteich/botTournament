@@ -31,7 +31,7 @@ client.once(Events.ClientReady, c => {
     console.log(`O bot está online como ${c.user.tag}`);
     setInterval(() => {
         handleListRank();
-    }, 30000);
+    }, 80000);
 });
 
 client.on(Events.InteractionCreate, async interaction => {

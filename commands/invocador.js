@@ -21,7 +21,7 @@ module.exports = {
     async execute(interaction) {
         try {
 
-            if (!interaction.deferred) {
+            if (!interaction.deferred && !interaction.replied) {
                 await interaction.deferReply({ ephemeral: false });
             }
 
@@ -38,8 +38,8 @@ module.exports = {
             }
 
             if (invocadorData && !promptName && !promptTag) {
-                const retornoApi = await riotMatchV5(invocadorData.puuid);
-                const returnMatch = await riotMatchData(retornoApi, 5);
+                const retornoApi = await riotMatchV5(invocadorData.puuid, 5);
+                const returnMatch = await riotMatchData(retornoApi);
 
                 if (Array.isArray(returnMatch)) {
                     const exampleEmbed = showInvocador(returnMatch, invocadorData);
@@ -47,8 +47,8 @@ module.exports = {
                 } 
             } else if(promptName && promptTag) {
                 const buscaPuuid = await fetchRiotAccount(promptName, promptTag);
-                const retornoApi = await riotMatchV5(buscaPuuid.puuid);
-                const returnMatch = await riotMatchData(retornoApi, 5);
+                const retornoApi = await riotMatchV5(buscaPuuid.puuid, 5);
+                const returnMatch = await riotMatchData(retornoApi);
 
                 if (Array.isArray(returnMatch)) {
                     const exampleEmbed = showInvocador(returnMatch, buscaPuuid);
@@ -58,8 +58,8 @@ module.exports = {
 
         } catch (error) {
             console.error('Erro ao buscar o invocador no banco de dados:', error);
-            if (!interaction.deferred) {
-                await interaction.editReply('Ocorreu um erro ao buscar seus dados de invocador.');
+            if (interaction.deferred) {
+                await interaction.editReply('Dados do invocador incorretos ou não existente.');
             }
         }
     }
