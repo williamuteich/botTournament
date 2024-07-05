@@ -2,15 +2,9 @@ const dbConnection = require('../database/discordDatabase').client;
 const { riotMatchV5 } = require('../api/apiRiotAccounts');
 const { riotMatchData } = require('../api/apiRiotAccounts');
 
-let isUpdating = false; 
 
 async function handleListRank(client) {
-    if (isUpdating) {
-        console.log('Atualização em andamento. Ignorando nova execução.');
-        return;
-    }
 
-    isUpdating = true; 
     const db = dbConnection.db();
     const invocadoresColletion = db.collection('invocadores');
 
@@ -60,15 +54,10 @@ async function handleListRank(client) {
             }
         }
 
-        if (invocadoresAtualizados === totalInvocadores) {
-            console.log('Todos os invocadores foram atualizados.');
-        } else {
-            console.log(`A atualização foi interrompida. Invocadores atualizados: ${invocadoresAtualizados} de ${totalInvocadores}`);
-        }
+        console.log(`Atualizados ${invocadoresAtualizados} de ${totalInvocadores} invocadores.`);
+        return;
     } catch (error) {
         console.error('Erro ao listar ranking:', error);
-    } finally {
-        isUpdating = false; 
     }
 }
 

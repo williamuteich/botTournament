@@ -28,28 +28,17 @@ const checkInvocador = require('./query/checkedInvocador');
 const isuserResult = require('./query/consultaUsers');
 const { handleListRank } = require('./checkFunctions/listRank');
 
-let jobRunning = false; // Variável para controlar se o job está em execução
-
 const rule = new schedule.RecurrenceRule();
-rule.hour = 6;
-rule.minute = 21;
+rule.hour = 20;
+rule.minute = 20;
 rule.tz = 'America/Sao_Paulo';
 
 schedule.scheduleJob(rule, async () => {
-    if (!jobRunning) {
-        jobRunning = true;
-        console.log('Job executado');
-        await handleListRank();
-        jobRunning = false;
-    } else {
-        console.log('Job ignorado: já está em andamento.');
-    }
+    await handleListRank();
 });
+
 client.once(Events.ClientReady, c => {
     console.log(`O bot está online como ${c.user.tag}`);
-    setInterval(() => {
-        handleListRank();
-    }, 240000);
 });
 
 client.on(Events.InteractionCreate, async interaction => {
