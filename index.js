@@ -28,17 +28,18 @@ const checkInvocador = require('./query/checkedInvocador');
 const isuserResult = require('./query/consultaUsers');
 const { handleListRank } = require('./checkFunctions/listRank');
 
-const rule = new schedule.RecurrenceRule();
-rule.hour = 20;
-rule.minute = 20;
-rule.tz = 'America/Sao_Paulo';
-
-schedule.scheduleJob(rule, async () => {
-    await handleListRank();
-});
-
 client.once(Events.ClientReady, c => {
     console.log(`O bot está online como ${c.user.tag}`);
+
+    const rule = new schedule.RecurrenceRule();
+    rule.hour = 3;
+    rule.minute = 34;
+    rule.tz = 'America/Sao_Paulo';
+    const channelId = c.channels.cache.find(ch => ch.id === '1258927479100276808');
+
+    schedule.scheduleJob(rule, async () => {
+        await handleListRank(client, channelId); 
+    });
 });
 
 client.on(Events.InteractionCreate, async interaction => {
