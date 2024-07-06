@@ -46,7 +46,7 @@ function showInvocador(partidas, invocadorData, imagem) {
         return {
             inline: false,
             name: `${emoji} ${gameMode}`,
-            value: `\n\`\`\`${jogadorPartida.championName}/${jogadorPartida.teamPosition} - ${minutes}:${seconds}\n\n Kill: ${jogadorPartida.kills} | Mortes: ${jogadorPartida.deaths} | Assist: ${jogadorPartida.assists}\n Farm: ${jogadorPartida.totalMinionsKilled} | Wards: ${jogadorPartida.wardsPlaced} \n Dano: ${jogadorPartida.totalDamageDealtToChampions} | Gold: ${jogadorPartida.goldEarned}\n\`\`\``,
+            value: `\n\`\`\`🎭${jogadorPartida.championName}/${jogadorPartida.teamPosition} - 🕗${minutes}:${seconds}\n\n ☠️Kill: ${jogadorPartida.kills} | ⚰️Mortes: ${jogadorPartida.deaths} | 💥Assist: ${jogadorPartida.assists}\n 👾Farm: ${jogadorPartida.totalMinionsKilled} | 🌻Wards: ${jogadorPartida.wardsPlaced} \n ⚔️Dano: ${jogadorPartida.totalDamageDealtToChampions} | 🟡Gold: ${jogadorPartida.goldEarned}\n\`\`\``,
         };
     });
 
