@@ -2,7 +2,6 @@ const { SlashCommandBuilder } = require('discord.js');
 const dbConnection = require('../database/discordDatabase').client;
 const riotMatchV5 = require('../api/apiRiotAccounts').riotMatchV5;
 const riotMatchData = require('../api/apiRiotAccounts').riotMatchData;
-const fetchRiotAccount = require('../api/apiRiotAccounts').fetchRiotAccount;
 const { showInvocador } = require('../handlers/embeds');
 
 module.exports = {
