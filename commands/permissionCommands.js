@@ -1,4 +1,5 @@
-const { SlashCommandBuilder, ChannelSelectMenuBuilder, UserSelectMenuBuilder, ActionRowBuilder, ChannelType, ComponentType } = require('discord.js');
+const { SlashCommandBuilder, ChannelSelectMenuBuilder, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, ChannelType, ComponentType, ActionRowBuilder } = require('discord.js');
+const dbConnection = require('../database/discordDatabase').client;
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -8,7 +9,7 @@ module.exports = {
     async execute(interaction) {
         try {
             let selectedChannels = [];
-            let selectedUsers = [];
+            let selectedCommands = [];
 
             const channelSelect = new ChannelSelectMenuBuilder()
                 .setCustomId('channels')
@@ -31,38 +32,51 @@ module.exports = {
             });
 
             channelCollector.on('collect', async (channelInteraction) => {
-                selectedChannels = selectedChannels.concat(channelInteraction.values); // Concatena os IDs dos canais selecionados
+                const nomeCanais = channelInteraction.channels.map(channel => channel.name);
+                console.log(nomeCanais);
+                selectedChannels = selectedChannels.concat(channelInteraction.values); 
+                console.log("teste", selectedChannels);
+                const db = dbConnection.db();
+                const commandsCollection = db.collection('botCommands');
+                const channelsCommandsCollection = db.collection('commandsChannels');
+                const commandsDb = await commandsCollection.find({}).toArray();
 
-                const userSelect = new UserSelectMenuBuilder()
-                    .setCustomId('users')
-                    .setPlaceholder('Selecione múltiplos usuários.')
-                    .setMinValues(1)
-                    .setMaxValues(10);
+                const commandOptions = commandsDb.map(command => (
+                    new StringSelectMenuOptionBuilder()
+                        .setLabel(command.name)
+                        .setDescription(command.description)
+                        .setValue(command.name)
+                ));
 
-                const rowUserSelect = new ActionRowBuilder().addComponents(userSelect);
+                const commandSelect = new StringSelectMenuBuilder()
+                    .setCustomId('commands')
+                    .setPlaceholder('Selecione um comando.')
+                    .addOptions(...commandOptions);
+
+                const rowCommandSelect = new ActionRowBuilder().addComponents(commandSelect);
 
                 await channelInteraction.reply({
-                    content: 'Selecione os usuários:',
-                    components: [rowUserSelect],
+                    content: 'Selecione um comando:',
+                    components: [rowCommandSelect],
                 });
 
-                const userCollector = interaction.channel.createMessageComponentCollector({
+                const commandCollector = interaction.channel.createMessageComponentCollector({
                     componentType: ComponentType.SELECT_MENU,
-                    filter: (i) => i.user.id === interaction.user.id && i.customId === 'users',
+                    filter: (i) => i.user.id === interaction.user.id && i.customId === 'commands',
                     time: 60000 
                 });
 
-                userCollector.on('collect', async (userInteraction) => {
-                    selectedUsers = selectedUsers.concat(userInteraction.values); 
+                commandCollector.on('collect', async (commandInteraction) => {
+                    selectedCommands = selectedCommands.concat(commandInteraction.values); 
 
-                    await userInteraction.reply(`Você selecionou os canais com IDs: ${selectedChannels.join(', ')} e os usuários com IDs: ${selectedUsers.join(', ')}`);
+                    await commandInteraction.reply(`Você salvou os canais: " ${nomeCanais.join(', ')} "  ==> comando: " ${selectedCommands.join(', ')} "`);
 
                     channelCollector.stop();
-                    userCollector.stop();
+                    commandCollector.stop();
                 });
             });
 
-            // Lidar com erros
+            // Step 7: Handle errors
             channelCollector.on('end', () => {
                 if (selectedChannels.length === 0) {
                     interaction.followUp('Você não selecionou nenhum canal de texto. O comando foi cancelado.');
