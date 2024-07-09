@@ -32,10 +32,9 @@ module.exports = {
             });
 
             channelCollector.on('collect', async (channelInteraction) => {
-                const nomeCanais = channelInteraction.channels.map(channel => channel.name);
-                console.log(nomeCanais);
+                const nameChannels = channelInteraction.channels.map(channel => channel.name);
                 selectedChannels = selectedChannels.concat(channelInteraction.values); 
-                console.log("teste", selectedChannels);
+
                 const db = dbConnection.db();
                 const commandsCollection = db.collection('botCommands');
                 const channelsCommandsCollection = db.collection('commandsChannels');
@@ -69,14 +68,36 @@ module.exports = {
                 commandCollector.on('collect', async (commandInteraction) => {
                     selectedCommands = selectedCommands.concat(commandInteraction.values); 
 
-                    await commandInteraction.reply(`Você salvou os canais: " ${nomeCanais.join(', ')} "  ==> comando: " ${selectedCommands.join(', ')} "`);
+                    //const inserData = await channelsCommandsCollection.insertOne({
+                    //    serverId: interaction.guild.id,
+                    //    nameChannels,
+                    //    channels: selectedChannels,
+                    //    commands: selectedCommands
+                    //})
+
+                    const existingDocument = await channelsCommandsCollection.findOne({ serverId: interaction.guild.id, commands: selectedCommands });
+
+                    if (existingDocument) {
+                        await channelsCommandsCollection.updateOne(
+                            { _id: existingDocument._id },
+                            { $set: { nameChannels, commands: selectedCommands, channels: selectedChannels } }
+                        );
+                    } else {
+                        await channelsCommandsCollection.insertOne({
+                            serverId: interaction.guild.id,
+                            nameChannels,
+                            commands: selectedCommands,
+                            channels: selectedChannels,
+                        });
+                    }
+
+                    await commandInteraction.reply(`Você salvou os canais: " ${nameChannels.join(', ')} "  ==> comando: " ${selectedCommands.join(', ')} "`);
 
                     channelCollector.stop();
                     commandCollector.stop();
                 });
             });
 
-            // Step 7: Handle errors
             channelCollector.on('end', () => {
                 if (selectedChannels.length === 0) {
                     interaction.followUp('Você não selecionou nenhum canal de texto. O comando foi cancelado.');

@@ -32,8 +32,8 @@ client.once(Events.ClientReady, c => {
     console.log(`O bot está online como ${c.user.tag}`);
 
     const rule = new schedule.RecurrenceRule();
-    rule.hour = 2;
-    rule.minute = 57;
+    rule.hour = 0;
+    rule.minute = 1;
     rule.tz = 'America/Sao_Paulo';
     const channelId = c.channels.cache.find(ch => ch.id === '1258927479100276808');
 
@@ -46,13 +46,13 @@ client.on(Events.InteractionCreate, async interaction => {
     if (interaction.isCommand()) {
         const command = client.commands.get(interaction.commandName);
         try {
-            const validCommandsLol = ['invocador', 'recents'];
             const userDiscordId = interaction.user.id;
             const userServerDiscordID = interaction.guild.id;
             const serverName = interaction.guild.name;
             const invocadorIsRegistered = await checkInvocador(userDiscordId);
             const isRegistered = await isuserResult(userDiscordId, userServerDiscordID, serverName);
-            
+            const dbConnection = require('./database/discordDatabase').client;
+
             if (isRegistered && interaction.commandName === 'register') {
                 await interaction.reply("Você já está cadastrado.");
                 return;
@@ -70,6 +70,24 @@ client.on(Events.InteractionCreate, async interaction => {
                 return;
             }
 
+            const db = dbConnection.db();
+            const channelsCommandsCollection = db.collection('commandsChannels');
+            const commandRecord = await channelsCommandsCollection.findOne({
+                serverId: interaction.guild.id,
+                commands: interaction.commandName,
+                channels: interaction.channel.id
+            });
+
+            if (interaction.commandName === 'permissao') {
+                await command.execute(interaction);
+                return;
+            }
+
+            if (!commandRecord) {
+                await interaction.reply(`Este comando só pode ser executado nos canais registrados.`);
+                return;
+            }
+
             await command.execute(interaction);
         } catch (error) {
             console.error(error);
@@ -77,6 +95,7 @@ client.on(Events.InteractionCreate, async interaction => {
         }
     }
 });
+
 
 client.on(Events.InteractionCreate, async interaction => {
     if (interaction.isModalSubmit()) {
