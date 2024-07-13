@@ -32,8 +32,8 @@ client.once(Events.ClientReady, c => {
     console.log(`O bot está online como ${c.user.tag}`);
 
     const rule = new schedule.RecurrenceRule();
-    rule.hour = 21;
-    rule.minute = 11;
+    rule.hour = 15;
+    rule.minute = 42;
     rule.tz = 'America/Sao_Paulo';
     const channelId = c.channels.cache.find(ch => ch.id === '1258927479100276808');
 

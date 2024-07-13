@@ -61,15 +61,15 @@ async function handleListRank(client, channelId) {
 
         topPlayers.forEach((player, index) => {
             let position = index + 1;
-            let positionString = `${position}. `;
+            let positionString = `${position}° `;
             
             // Adiciona emojis para os três primeiros lugares
             if (position === 1) {
-                positionString = `🥇 ${position}.\n `;
+                positionString = `🥇 ${position}°\n `;
             } else if (position === 2) {
-                positionString = `🥈 ${position}.\n `;
+                positionString = `🥈 ${position}°\n `;
             } else if (position === 3) {
-                positionString = `🥉 ${position}.\n `;
+                positionString = `🥉 ${position}°\n `;
             }
 
             rankingNumbers += `${positionString}`;
