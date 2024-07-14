@@ -35,8 +35,9 @@ client.once(Events.ClientReady, c => {
     setInterval(() => pollPayments(client), 30000);
 
     const rule = new schedule.RecurrenceRule();
-    rule.hour = 13;
-    rule.minute = 46;
+    //Programado para as 6 da manhã
+    rule.hour = 3;
+    rule.minute = 0;
     rule.tz = 'America/Sao_Paulo';
     const channelId = c.channels.cache.find(ch => ch.id === '1258927479100276808');
 
@@ -99,7 +100,7 @@ client.on(Events.InteractionCreate, async interaction => {
                     await command.execute(interaction);
                     const updateResult = await updateUserCredits(userDiscordId, serverId, userCredits - 1);
                     if (updateResult) {
-                        await interaction.editReply(`Você tem ${userCredits - 1} créditos restantes.`);
+                        await interaction.followUp(`Você tem ${userCredits - 1} créditos restantes.`);
                     } else {
                         await interaction.followUp('Erro ao atualizar seus créditos. Por favor, tente novamente.');
                     }
