@@ -68,13 +68,6 @@ module.exports = {
                 commandCollector.on('collect', async (commandInteraction) => {
                     selectedCommands = selectedCommands.concat(commandInteraction.values); 
 
-                    //const inserData = await channelsCommandsCollection.insertOne({
-                    //    serverId: interaction.guild.id,
-                    //    nameChannels,
-                    //    channels: selectedChannels,
-                    //    commands: selectedCommands
-                    //})
-
                     const existingDocument = await channelsCommandsCollection.findOne({ serverId: interaction.guild.id, commands: selectedCommands });
 
                     if (existingDocument) {
