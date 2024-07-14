@@ -26,14 +26,14 @@ module.exports = {
             const paymentsCollection = db.collection('gatewayPayments');
 
             const user = await usersCollection.findOne({ userDiscord: userDiscordID });
-            console.log(user)
+
             const idempotencyKey = uuidv4();
 
-           const createdAtFormatted = format(new Date(), "yyyy-MM-dd'T'HH:mm:ss.SSSxxx", { timeZone: 'America/Sao_Paulo' });
-           const dateExpiration = format(addMinutes(new Date(createdAtFormatted), 6), "yyyy-MM-dd'T'HH:mm:ss.SSSxxx", { timeZone: 'America/Sao_Paulo' });
+            const createdAtFormatted = format(new Date(), "yyyy-MM-dd'T'HH:mm:ss.SSSxxx", { timeZone: 'America/Sao_Paulo' });
+            const dateExpiration = format(addMinutes(new Date(createdAtFormatted), 6), "yyyy-MM-dd'T'HH:mm:ss.SSSxxx", { timeZone: 'America/Sao_Paulo' });
 
             const paymentData = {
-                transaction_amount: 1.00,
+                transaction_amount: 0.10,
                 description: 'Bot Tournament - Generative AI Art',
                 date_of_expiration: dateExpiration,
                 payment_method_id: 'pix',
@@ -68,42 +68,43 @@ module.exports = {
             };
 
             await paymentsCollection.insertOne(paymentRecord);
-            const imagemBase64 = `data:image/gif;base64,${result.point_of_interaction.transaction_data.qr_code_base64}`;
 
+            const qrCodeBase64 = result.point_of_interaction.transaction_data.qr_code_base64;
+
+            // Montando o embed
+            const exampleEmbed = new EmbedBuilder()
+                .setColor(0x0099FF)
+                .setTitle('Pagamento Online')
+                .setURL(result.point_of_interaction.transaction_data.ticket_url)
+                .setAuthor({ name: 'Pagamento Online', iconURL: 'https://i.imgur.com/AfFp7pu.png', url: result.point_of_interaction.transaction_data.ticket_url })
+                .setDescription('Faça uma recarga via Pix')
+                .setThumbnail('https://i.imgur.com/AfFp7pu.png')
+                .addFields(
+                    { name: 'Método', value: 'PIX', inline: true },
+                    { name: 'valor', value: 'R$1,00', inline: true },
+                    { name: 'Expira', value: '6 Min', inline: true },
+                    //{ name: '\u200B', value: '\u200B' },
+                    { name: 'Copia e cola', value: `\n\`\`\`${result.point_of_interaction.transaction_data.qr_code}\n\`\`\`` },
+                    { name: 'Link de pagamento', value: `[Mercado Pago Payments](${result.point_of_interaction.transaction_data.ticket_url})` },
+                )
+                .setTimestamp()
+                .setFooter({ text: 'Pagamento Gerado', iconURL: 'https://i.imgur.com/AfFp7pu.png' });
+
+            await interaction.reply({
+                embeds: [exampleEmbed],
+                ephemeral: true,
+            });
+
+            const imagemBase64 = `data:image/gif;base64,${qrCodeBase64}`;
             const imageBuffer = Buffer.from(imagemBase64.split(",")[1], 'base64');
             const attachments = new AttachmentBuilder(imageBuffer, 'qrCode.png');
             
-            //await interaction.reply({
-            //    content: `**Copia e Cola:**\n\`\`\`${result.point_of_interaction.transaction_data.qr_code}\n\`\`\``,
-            //    files: [attachments],
-            //    ephemeral: true,
-            //    components: [],
-            //});
+            await interaction.followUp({
+                content: "QR Code: ",
+                files: [attachments],
+                ephemeral: true,
+            });
             
-            //await interaction.followUp({
-            //    content: "Link para pagamento: " + result.point_of_interaction.transaction_data.ticket_url,
-            //    ephemeral: true,
-            //});
-
-            const exampleEmbed = new EmbedBuilder()
-            .setColor(0x0099FF)
-            .setTitle('Some title')
-            .setURL('https://discord.js.org/')
-            .setAuthor({ name: 'Some name', iconURL: 'https://i.imgur.com/AfFp7pu.png', url: 'https://discord.js.org' })
-            .setDescription('Some description here')
-            .setThumbnail('https://i.imgur.com/AfFp7pu.png')
-            .addFields(
-                { name: 'Regular field title', value: 'Some value here' },
-                { name: '\u200B', value: '\u200B' },
-                { name: 'Inline field title', value: 'Some value here', inline: true },
-                { name: 'Inline field title', value: 'Some value here', inline: true },
-            )
-            .addFields({ name: 'Inline field title', value: 'Some value here', inline: true })
-            .setImage('https://i.imgur.com/AfFp7pu.png')
-            .setTimestamp()
-            .setFooter({ text: 'Some footer text here', iconURL: 'https://i.imgur.com/AfFp7pu.png' });
-
-            await interaction.reply({ embeds: [exampleEmbed], ephemeral: true });
         } catch (error) {
             console.error("Erro ao executar o pagamento:", error);
             await interaction.reply("Erro ao executar o pagamento: " + error.message);
